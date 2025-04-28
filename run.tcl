@@ -4,6 +4,7 @@ vlog -sv -cover bcst package2.sv trans_pkg.sv package.sv  top.sv
 vsim -gui -coverage -assertdebug -voptargs=+acc -onfinish stop work.top +TEST0
 do exclusion.do
 #vsim -voptargs=+acc work.top
+do wave_memory_banks.do
 run -all
 coverage save -assert -directive -cvg -codeAll cov.ucdb
 vcover report -html -output covhtmlreport -details -assert -directive -cvg -code bcefst -threshL 50 -threshH 90 cov.ucdb
