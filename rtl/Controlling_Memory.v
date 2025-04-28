@@ -49,107 +49,46 @@ module memory_control_unit#(  parameter DATA_WIDTH    = 12,
 	                                output [ENCODED_WORD+1:1] bank_b_1,bank_b_2,bank_b_3,bank_b_4    
                                );
 	
-	wire                    ena_w1,ena_w2,ena_w3,ena_w4,enb_w1,enb_w2,enb_w3,enb_w4; //enable wires.
-	wire [ADDR_WIDTH-3:0]   w_a1,w_a2,w_a3,w_a4;                                     //address_a wires.
-	wire [ADDR_WIDTH-3:0]   w_b1,w_b2,w_b3,w_b4;                                     //address_b wires.
-	wire [ENCODED_WORD+1:1] d_a1,d_a2,d_a3,d_a4;                                     //data_a wires.
-	wire [ENCODED_WORD+1:1] d_b1,d_b2,d_b3,d_b4;                                     //data_b wires.
+	wire                    ena_w[4];   //enable wires for port-a.
+  wire                    enb_w[4];   //enable wires for port-b.
+	wire [ADDR_WIDTH-3:0]   w_a[4];     //address_a wires.
+	wire [ADDR_WIDTH-3:0]   w_b[4];     //address_b wires.
+	wire [ENCODED_WORD+1:1] d_a[4];     //data_a wires.
+	wire [ENCODED_WORD+1:1] d_b[4];     //data_b wires.
+  wire [ENCODED_WORD+1:1] out_a_w[4]; //bank output wires for port-a.
+  wire [ENCODED_WORD+1:1] out_b_w[4]; //bank output wires for port-b.
+
+  genvar i;
 
 
 
-	// This latency module for BANK-1 delays the write operation related signals by write_latency
+	// This latency module for all the banks delays the write operation related signals by write_latency
   // period and given to the memory as input. The memory output is taken as input to 
   // this module which inturn is given as the output to the top module after 
   // read_latency period.
-	latency_top#( .WR_LATENCYA(WR_LATENCYA),
-                .WR_LATENCYB(WR_LATENCYB),
-                .RD_LATENCYA(RD_LATENCYA),
-	              .RD_LATENCYB(RD_LATENCYB),
-                .MEM_DEPTH(MEM_DEPTH),
-                .ADDR_WIDTH(ADDR_WIDTH-2),
-                .DATA_WIDTH(DATA_WIDTH))BANK_1( .clka(clka),
-                                                .clkb(clkb),
-                                                .i_wea(i_wea),
-                                                .i_web(i_web),
-                                                .i_ena(ena_w1),
-                                                .i_enb(enb_w1),
-                                                .i_addra(w_a1),
-                                                .i_addrb(w_b1),
-	                                              .i_dina(d_a1),
-                                                .i_dinb(d_b1),
-                                                .o_douta(bank_a_1),
-                                                .o_doutb(bank_b_1));
-
-  // This latency module for BANK-2 delays the write operation related signals by write_latency
-  // period and given to the memory as input. The memory output is taken as input to 
-  // this module which inturn is given as the output to the top module after 
-  // read_latency period.	
-	latency_top#( .WR_LATENCYA(WR_LATENCYA),
-                .WR_LATENCYB(WR_LATENCYB),
-                .RD_LATENCYA(RD_LATENCYA),
-	              .RD_LATENCYB(RD_LATENCYB),
-                .MEM_DEPTH(MEM_DEPTH),
-                .ADDR_WIDTH(ADDR_WIDTH-2),
-                .DATA_WIDTH(DATA_WIDTH))BANK_2( .clka(clka),
-                                                .clkb(clkb),
-                                                .i_wea(i_wea),
-                                                .i_web(i_web),
-                                                .i_ena(ena_w2),
-                                                .i_enb(enb_w2),
-                                                .i_addra(w_a2),
-                                                .i_addrb(w_b2),
-	                                              .i_dina(d_a2),
-                                                .i_dinb(d_b2),
-                                                .o_douta(bank_a_2),
-                                                .o_doutb(bank_b_2));
-	  
-	// This latency module for BANK-3 delays the write operation related signals by write_latency
-  // period and given to the memory as input. The memory output is taken as input to 
-  // this module which inturn is given as the output to the top module after 
-  // read_latency period. 
-	latency_top#( .WR_LATENCYA(WR_LATENCYA),
-                .WR_LATENCYB(WR_LATENCYB),
-                .RD_LATENCYA(RD_LATENCYA),
-	              .RD_LATENCYB(RD_LATENCYB),
-                .MEM_DEPTH(MEM_DEPTH),
-                .ADDR_WIDTH(ADDR_WIDTH-2),
-                .DATA_WIDTH(DATA_WIDTH))BANK_3( .clka(clka),
-                                                .clkb(clkb),
-                                                .i_wea(i_wea),
-                                                .i_web(i_web),
-                                                .i_ena(ena_w3),
-                                                .i_enb(enb_w3),
-                                                .i_addra(w_a3),
-                                                .i_addrb(w_b3),
-	                                              .i_dina(d_a3),
-                                                .i_dinb(d_b3),
-                                                .o_douta(bank_a_3),
-                                                .o_doutb(bank_b_3));
-	  
-	// This latency module for BANK-4 delays the write operation related signals by write_latency
-  // period and given to the memory as input. The memory output is taken as input to 
-  // this module which inturn is given as the output to the top module after 
-  // read_latency period.
-  latency_top#( .WR_LATENCYA(WR_LATENCYA),
-                .WR_LATENCYB(WR_LATENCYB),
-                .RD_LATENCYA(RD_LATENCYA),
-	              .RD_LATENCYB(RD_LATENCYB),
-                .MEM_DEPTH(MEM_DEPTH),
-                .ADDR_WIDTH(ADDR_WIDTH-2),
-                .DATA_WIDTH(DATA_WIDTH))BANK_4( .clka(clka),
-                                                .clkb(clkb),
-                                                .i_wea(i_wea),
-                                                .i_web(i_web),
-                                                .i_ena(ena_w4),
-                                                .i_enb(enb_w4),
-                                                .i_addra(w_a4),
-                                                .i_addrb(w_b4),
-	                                              .i_dina(d_a4),
-                                                .i_dinb(d_b4),
-                                                .o_douta(bank_a_4),
-                                                .o_doutb(bank_b_4));
-
-
+  generate
+    for( i = 0; i < 4; i = i + 1)
+    begin
+	    latency_top#( .WR_LATENCYA(WR_LATENCYA),
+                    .WR_LATENCYB(WR_LATENCYB),
+                    .RD_LATENCYA(RD_LATENCYA),
+	                  .RD_LATENCYB(RD_LATENCYB),
+                    .MEM_DEPTH(MEM_DEPTH),
+                    .ADDR_WIDTH(ADDR_WIDTH-2),
+                    .DATA_WIDTH(DATA_WIDTH))BANK( .clka(clka),
+                                                  .clkb(clkb),
+                                                  .i_wea(i_wea),
+                                                  .i_web(i_web),
+                                                  .i_ena(ena_w[i]),
+                                                  .i_enb(enb_w[i]),
+                                                  .i_addra(w_a[i]),
+                                                  .i_addrb(w_b[i]),
+	                                                .i_dina(d_a[i]),
+                                                  .i_dinb(d_b[i]),
+                                                  .o_douta(out_a_w[i]),
+                                                  .o_doutb(out_b_w[i]));
+    end
+  endgenerate
 	  
 	//This is the banking control interface module which is the main module that
   //deals with address decoding, bank selection and data routing using
@@ -162,29 +101,39 @@ module memory_control_unit#(  parameter DATA_WIDTH    = 12,
                                                                               .i_data_b(i_data_in_b),
                                                                               .i_ena(i_ena),
                                                                               .i_enb(i_enb),
-	                                                                            .o_a1(ena_w1),
-                                                                              .o_a2(ena_w2),
-                                                                              .o_a3(ena_w3),
-                                                                              .o_a4(ena_w4),
-                                                                              .o_b1(enb_w1),
-                                                                              .o_b2(enb_w2),
-                                                                              .o_b3(enb_w3),
-                                                                              .o_b4(enb_w4),
-                                                                              .o_addr_out_a1(w_a1),
-                                                                              .o_addr_out_a2(w_a2),
-	                                                                            .o_addr_out_a3(w_a3),
-                                                                              .o_addr_out_a4(w_a4),
-                                                                              .o_addr_out_b1(w_b1),
-                                                                              .o_addr_out_b2(w_b2),
-	                                                                            .o_addr_out_b3(w_b3),
-                                                                              .o_addr_out_b4(w_b4),
-                                                                              .o_data_out_a1(d_a1),
-                                                                              .o_data_out_a2(d_a2),
-                                                                              .o_data_out_a3(d_a3),
-                                                                              .o_data_out_a4(d_a4),
-	                                                                            .o_data_out_b1(d_b1),
-                                                                              .o_data_out_b2(d_b2),
-                                                                              .o_data_out_b3(d_b3),
-                                                                              .o_data_out_b4(d_b4));
-	
+	                                                                            .o_a1(ena_w[0]),
+                                                                              .o_a2(ena_w[1]),
+                                                                              .o_a3(ena_w[2]),
+                                                                              .o_a4(ena_w[3]),
+                                                                              .o_b1(enb_w[0]),
+                                                                              .o_b2(enb_w[1]),
+                                                                              .o_b3(enb_w[2]),
+                                                                              .o_b4(enb_w[3]),
+                                                                              .o_addr_out_a1(w_a[0]),
+                                                                              .o_addr_out_a2(w_a[1]),
+	                                                                            .o_addr_out_a3(w_a[2]),
+                                                                              .o_addr_out_a4(w_a[3]),
+                                                                              .o_addr_out_b1(w_b[0]),
+                                                                              .o_addr_out_b2(w_b[1]),
+	                                                                            .o_addr_out_b3(w_b[2]),
+                                                                              .o_addr_out_b4(w_b[3]),
+                                                                              .o_data_out_a1(d_a[0]),
+                                                                              .o_data_out_a2(d_a[1]),
+                                                                              .o_data_out_a3(d_a[2]),
+                                                                              .o_data_out_a4(d_a[3]),
+	                                                                            .o_data_out_b1(d_b[0]),
+                                                                              .o_data_out_b2(d_b[1]),
+                                                                              .o_data_out_b3(d_b[2]),
+                                                                              .o_data_out_b4(d_b[3]));
+
+
+  assign  bank_a_1 = out_a_w[0]; 
+  assign  bank_a_2 = out_a_w[1]; 
+  assign  bank_a_3 = out_a_w[2]; 
+  assign  bank_a_4 = out_a_w[3]; 
+
+  assign  bank_b_1 = out_b_w[0];
+  assign  bank_b_2 = out_b_w[1];
+  assign  bank_b_3 = out_b_w[2];
+  assign  bank_b_4 = out_b_w[3];
 endmodule
